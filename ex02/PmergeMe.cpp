@@ -62,11 +62,11 @@ void PmergeMe::sortAndMeasure()
     printContainer("Before: ", _vec);
 
     std::clock_t startVec = std::clock();
-    mergeSortVector(_vec, 0, _vec.size() - 1);
+    fordJohnsonSortVector(_vec);
     std::clock_t endVec = std::clock();
 
     std::clock_t startDeq = std::clock();
-    mergeSortDeque(_deq, 0, _deq.size() - 1);
+    fordJohnsonSortDeque(_deq);
     std::clock_t endDeq = std::clock();
 
     printContainer("After: ", _vec);
@@ -77,7 +77,7 @@ void PmergeMe::sortAndMeasure()
     std::cout << "Time to process a range of " << _vec.size()
               << " elements with std::vector : " << timeVec << " us" << std::endl;
     std::cout << "Time to process a range of " << _deq.size()
-              << " elements with std::deque : " << timeDeq << " us" << std::endl;
+              << " elements with std::deque  : " << timeDeq << " us" << std::endl;
 }
 
 void PmergeMe::mergeVector(std::vector<int> &vec, int left, int mid, int right)
@@ -146,4 +146,89 @@ void PmergeMe::mergeSortDeque(std::deque<int> &deq, int left, int right)
     mergeSortDeque(deq, left, mid);
     mergeSortDeque(deq, mid + 1, right);
     mergeDeque(deq, left, mid, right);
+}
+
+int PmergeMe::binarySearchPosition(const std::vector<int>& vec, int value) {
+    int left = 0;
+    int right = vec.size();
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+        if (vec[mid] < value)
+            left = mid + 1;
+        else
+            right = mid;
+    }
+    return left;
+}
+
+void PmergeMe::fordJohnsonSortVector(std::vector<int>& input) {
+    if (input.size() <= 1)
+        return;
+    std::vector<int> mainChain;
+    std::vector<int> pending;
+
+    for (std::size_t i = 0; i + 1 < input.size(); i += 2) {
+        int a = input[i];
+        int b = input[i + 1];
+        if (a < b) {
+            mainChain.push_back(b);
+            pending.push_back(a);
+        } else {
+            mainChain.push_back(a);
+            pending.push_back(b);
+        }
+    }
+
+    if (input.size() % 2 != 0)
+        pending.push_back(input[input.size() - 1]);
+    
+    mergeSortVector(mainChain, 0, mainChain.size() - 1);
+
+    for (std::size_t i = 0; i < pending.size(); ++i) {
+        int pos = binarySearchPosition(mainChain, pending[i]);
+        mainChain.insert(mainChain.begin() + pos, pending[i]);
+    }
+    input = mainChain;
+}
+
+void PmergeMe::fordJohnsonSortDeque(std::deque<int> &input)
+{
+    if (input.size() <= 1)
+        return;
+
+    std::deque<int> mainChain;
+    std::deque<int> pending;
+
+    for (std::size_t i = 0; i + 1 < input.size(); i += 2)
+    {
+        int a = input[i];
+        int b = input[i + 1];
+        if (a < b)
+        {
+            mainChain.push_back(b);
+            pending.push_back(a);
+        }
+        else
+        {
+            mainChain.push_back(a);
+            pending.push_back(b);
+        }
+    }
+
+    if (input.size() % 2 != 0)
+        pending.push_back(input[input.size() - 1]);
+
+    // normal merge sort
+    mergeSortDeque(mainChain, 0, mainChain.size() - 1);
+
+    for (std::size_t i = 0; i < pending.size(); ++i)
+    {
+        int value = pending[i];
+        std::size_t pos = 0;
+        while (pos < mainChain.size() && mainChain[pos] < value)
+            ++pos;
+        mainChain.insert(mainChain.begin() + pos, value);
+    }
+
+    input = mainChain;
 }

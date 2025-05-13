@@ -26,6 +26,10 @@ class PmergeMe {
 
         void mergeSortDeque(std::deque<int>& deq, int left, int right);
         void mergeDeque(std::deque<int>& deq, int left, int mid, int right);
+
+        void fordJohnsonSortVector(std::vector<int> &vec);
+        int binarySearchPosition(const std::vector<int> &vec, int value);
+        void fordJohnsonSortDeque(std::deque<int> &deq);
 };
 
 #endif

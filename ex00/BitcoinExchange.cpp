@@ -68,7 +68,7 @@ void BitcoinExchange::loadDatabase(const std::string& filename) {
     }
 
     std::string line;
-    std::getline(file, line); // skip header
+    std::getline(file, line);
 
     while (std::getline(file, line)) {
         std::istringstream iss(line);
@@ -109,7 +109,7 @@ void BitcoinExchange::processInput(const std::string& filename) {
             header_checked = true;
             if (trim(line) != "date | value") {
                 std::cerr << "The input.txt format is incorrect. The first line should be: \"date | value\"" << std::endl;
-                return; // exit yerine return
+                return;
             }
             continue;
         }

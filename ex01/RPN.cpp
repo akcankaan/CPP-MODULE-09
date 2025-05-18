@@ -19,7 +19,6 @@ bool RPN::isNumber(const std::string &token)
     if (token.empty())
         return false;
 
-    // Eğer token sadece "-" ise bu sayı değildir (operatördür)
     if (token == "-")
         return false;
 
